@@ -1,0 +1,30 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "",
+    "Metadata": {
+
+    },
+    "Parameters": {
+
+    },
+    "Mappings": {
+
+    },
+    "Conditions": {
+
+    },
+    "Resources": {
+      "NATGateway" : {
+  "Type" : "AWS::EC2::NatGateway",
+  "Properties" : {
+      "AllocationId" : ,
+      "ConnectivityType" : "String",
+      "SubnetId" : { "Ref": "logicalName" },
+      "Tags" : [ { "Key": "-", "Value":  "--" } ]
+
+  }
+
+},
+}
+"Outputs": {
+}

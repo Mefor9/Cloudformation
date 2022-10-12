@@ -1,0 +1,33 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "creates vpc, igw, subnets",
+    "Metadata": {
+
+    },
+    "Parameters": {"testvpcCidr": {
+        "Description": "parameterising my vpcCidr",
+        "Type": "String",
+        "Default": "10.0.0.0/16"
+    }
+
+    },
+    "Mappings": {
+
+    },
+    "Conditions": {
+
+    },
+    "Resources": {
+      "testvpc": {
+        "Type": "AWS::EC2::VPC",
+        "Properties": {
+          "CidrBlock": { "Ref": "testvpcCidr" },
+          "Tags": [{ "Key": "Name", "Value":  "testvpc" }]
+        }
+      }
+
+    },
+    "Outputs": {
+
+    }
+}

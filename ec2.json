@@ -1,0 +1,73 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "",
+    "Metadata": {
+
+    },
+    "Parameters": {
+
+    },
+    "Mappings": {
+      "Regions": {
+                "us-east-1": {
+                  "ami": "val"
+                },
+                "us-east-2": {
+                  "ami": "ami-0568773882d492fc8
+"
+},
+                "us-west-1": {
+"ami": "ami-018d291ca9ffc002f
+"
+},
+                "us-west-2": {
+"ami": "ami-0c2ab3b8efb09f272
+"
+}
+      }
+
+    },
+    "Conditions": {
+
+    },
+    "Resources": {
+      "instance1" : {
+    "Type" : "AWS::EC2::Instance",
+    "Properties" : {
+      "ImageId" : { "Fn::FindInMap" : [ "Regions", { "Ref" : "AWS::Region" }, "ami" ]}
+      "InstanceType":"t2.micro"
+      "KeyName" : "Meforkey",
+      "NetworkInterfaces": [ {
+        "AssociatePublicIpAddress": "true",
+        "DeviceIndex": "0",
+        "GroupSet": [{ "Ref" : "SG" }],
+        "SubnetId": {"Fn::ImportValue" : ""}
+      } ]
+    }
+  },
+  "SG" : {
+     "Type" : "AWS::EC2::SecurityGroup",
+     "Properties" : {
+        "GroupDescription" : "Allow SSH and HTTP",
+        "SecurityGroupIngress" : [
+          {"IpProtocol" : "tcp",
+           "FromPort" : "80",
+           "ToPort" : "80",
+           "CidrIp" : "0.0.0.0/0"
+        },
+           {"IpProtocol" : "tcp",
+           "FromPort" : "22",
+           "ToPort" : "22",
+           "CidrIp" : "0.0.0.0/0"}
+        ],
+          "VpcId" : {"Fn::ImportValue" : "AndyVpcID"}
+
+     }
+
+}
+
+    },
+    "Outputs": {
+
+    }
+}

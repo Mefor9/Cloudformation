@@ -1,0 +1,187 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "vpc, igw, 2 pub subnets, 2 priv subnets, routetables + association , pub route",
+    "Metadata": {
+
+    },
+    "Parameters": {
+      "testvpcCidr": {
+          "Description": "parameterising my testvpc",
+          "Type": "String",
+          "Default": "11.0.0.0/16"
+      },
+      "availabilityzone1": {
+          "Description": "this is availability zone for my pubsub1",
+          "Type": "String",
+          "Default": "AWS::EC2::AvailabilityZone::Name"
+      },
+      "pubsub1Cidr": {
+          "Description": "this cidr is for my pubsub1",
+          "Type": "String",
+          "Default": "11.0.1.0/24"
+      },
+      "availabilityzone2": {
+          "Description": "this availability zone is for my pubsub2",
+          "Type": "String",
+          "Default": "AWS::EC2::AvailabilityZone::Name"
+      },
+      "pubsub2Cidr": {
+          "Description": "this cidr is for my pubsub2",
+          "Type": "String",
+          "Default": "11.0.2.0/24"
+      },
+      "availabilityzone3": {
+          "Description": "This is availability zone for my privsub1",
+          "Type": "String",
+          "Default": "AWS::EC2::AvailabilityZone::Name"
+      },
+      "privsub1Cidr": {
+          "Description": "this cidr is for my privsub1",
+          "Type": "String",
+          "Default": "11.0.3.0/24"
+      },
+      "availabilityzone4": {
+          "Description": "This is availability zone for my privsub2",
+          "Type": "String",
+          "Default": "AWS::EC2::AvailabilityZone::Name"
+      },
+      "privsub2Cidr": {
+          "Description": "This is cidr for my privsub2",
+          "Type": "String",
+          "Default": "11.0.4.0/24"
+      }
+
+
+    },
+
+    "Mappings": {
+
+    },
+    "Conditions": {
+
+    },
+    "Resources": {
+      "testvpc": {
+        "Type": "AWS::EC2::VPC",
+        "Properties": {
+          "CidrBlock": {"Ref": "testvpcCidr" },
+          "Tags": [{ "Key": "Name", "Value":  "testvpc" }]
+        }
+      },
+      "igw": {
+        "Type": "AWS::EC2::InternetGateway",
+        "Properties": {
+          "Tags": [{ "Key": "Name", "Value":  "igw" }]
+        }
+      },
+      "AttachGateway": {
+        "Type": "AWS::EC2::VPCGatewayAttachment",
+        "Properties": {
+          "VpcId": { "Ref": "testvpc" },
+          "InternetGatewayId": { "Ref": "igw" }
+        }
+      },
+      "pubsub1": {
+        "Type": "AWS::EC2::Subnet",
+        "Properties": {
+          "AvailabilityZone": { "Ref": "availabilityzone1" },
+          "VpcId": { "Ref": "testvpc" },
+          "CidrBlock": { "Ref": "pubsub1Cidr" },
+          "Tags": [{ "Key": "Name", "Value":  "pubsub1" }]
+        }
+      },
+      "pubsub2": {
+        "Type": "AWS::EC2::Subnet",
+        "Properties": {
+          "AvailabilityZone": { "Ref": "availabilityzone2" },
+          "VpcId": { "Ref": "testvpc" },
+          "CidrBlock": { "Ref": "pubsub2Cidr" },
+          "Tags": [{ "Key": "Name", "Value":  "pubsub2" }]
+        }
+      },
+      "privsub1": {
+        "Type": "AWS::EC2::Subnet",
+        "Properties": {
+          "AvailabilityZone": { "Ref": "availabilityzone3" },
+          "VpcId": { "Ref": "testvpc" },
+          "CidrBlock": { "Ref": "privsub1Cidr" },
+          "Tags": [{ "Key": "Name", "Value":  "privsub1" }]
+        }
+      },
+      "privsub2": {
+        "Type": "AWS::EC2::Subnet",
+        "Properties": {
+          "AvailabilityZone": { "Ref": "availabilityzone4" },
+          "VpcId": { "Ref": "testvpc" },
+          "CidrBlock": { "Ref": "privsub2Cidr" },
+          "Tags": [{ "Key": "Name", "Value":  "privsub2" }]
+        }
+      },
+      "pubroutetable": {
+        "Type": "AWS::EC2::RouteTable",
+        "Properties": {
+          "VpcId": { "Ref": "testvpc" },
+          "Tags": [{ "Key": "Name", "Value":  "pubroutetable" }]
+        }
+      },
+      "privroutetable": {
+        "Type": "AWS::EC2::RouteTable",
+        "Properties": {
+          "VpcId": { "Ref": "testvpc" },
+          "Tags": [{ "Key": "Name", "Value":  "privroutetable" }]
+        }
+      },
+      "pub1rtAssoc": {
+        "Type": "AWS::EC2::SubnetRouteTableAssociation",
+        "Properties": {
+          "SubnetId": { "Ref": "pubsub1" },
+          "RouteTableId": { "Ref": "pubroutetable" }
+        }
+      },
+      "pub2rtAssoc": {
+        "Type": "AWS::EC2::SubnetRouteTableAssociation",
+        "Properties": {
+          "SubnetId": { "Ref": "pubsub2" },
+          "RouteTableId": { "Ref": "pubroutetable" }
+        }
+      },
+      "pubroute": {
+        "Type": "AWS::EC2::Route",
+        "Properties": {
+          "RouteTableId": { "Ref": "pubroutetable" },
+          "DestinationCidrBlock": "0.0.0.0/0",
+          "GatewayId": { "Ref": "igw" }
+        }
+      },
+      "priv1rtAssoc": {
+        "Type": "AWS::EC2::SubnetRouteTableAssociation",
+        "Properties": {
+          "SubnetId": { "Ref": "privsub1" },
+          "RouteTableId": { "Ref": "privroutetable" }
+        }
+      },
+      "priv2rtAssoc": {
+        "Type": "AWS::EC2::SubnetRouteTableAssociation",
+        "Properties": {
+          "SubnetId": { "Ref": "privsub2" },
+          "RouteTableId": { "Ref": "privroutetable" }
+        }
+}
+
+    },
+    "Outputs": {
+  "testvpcID" : {
+    "Value" : { "Ref": "testvpc" },
+    "Export" : { "Name": "testvpcID" }
+  },
+  "pubsub1ID" : {
+    "Value" : { "Ref": "pubsub1" },
+    "Export" : { "Name": "pubsub1ID" }
+  },
+  "pubsub2ID" : {
+    "Value" : { "Ref": "pubsub2" },
+    "Export" : { "Name": "pubsub2ID" }
+  }
+}
+
+}

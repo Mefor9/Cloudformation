@@ -1,0 +1,99 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "this template creates a vpc, 2 pub sub, 2 priv sub, igw, route tables and association, nategateway",
+    "Metadata": {
+
+    },
+    "Parameters": {
+      "MeforvpcCidr": {
+          "Description": "cidr for Meforvpc",
+          "Type": "String",
+          "Default": "10.0.0.0/16"
+      },
+      "Mefpubsub1Az": {
+          "Description": "Az for Mefpubsub1",
+          "Type": "String",
+          "Default": "AWS::EC2::AvailabilityZone::Name"
+      },
+      "Mefpubsub1Cidr": {
+          "Description": "Cidr for Mefpubsub1",
+          "Type": "String",
+          "Default": "10.0.0.1/24"
+      },
+      "Mefpubsub2Az": {
+          "Description": "Az for Mefpubsub2",
+          "Type": "String",
+          "Default": "AWS::EC2::AvailabilityZone::Name"
+      },
+      "Mefpubsub2Cidr": {
+          "Description": "Cidr for Mefpubsub2",
+          "Type": "String",
+          "Default": "10.0.0.2/24"
+      },
+      "Mefprivsub1Az": {
+          "Description": "Az for Mefprivsub1",
+          "Type": "String",
+          "Default": "AWS::EC2::AvailabilityZone::Name"
+      }
+
+    },
+    "Mappings": {
+
+    },
+    "Conditions": {
+
+    },
+    "Resources": {
+      "Meforvpc": {
+        "Type": "AWS::EC2::VPC",
+        "Properties": {
+          "CidrBlock": { "Ref": "MeforvpcCidr" },
+          "Tags": [{ "Key": "Name", "Value":  "Meforvpc" }]
+        }
+      },
+      "Meforigw": {
+        "Type": "AWS::EC2::InternetGateway",
+        "Properties": {
+          "Tags": [{ "Key": "Name", "Value":  "Meforigw" }]
+        }
+      },
+      "AttachGateway": {
+        "Type": "AWS::EC2::VPCGatewayAttachment",
+        "Properties": {
+          "VpcId": { "Ref": "MeforvpcCidr" },
+          "InternetGatewayId": { "Ref": "Meforigw" }
+        }
+      },
+      "Mefpubsub1": {
+        "Type": "AWS::EC2::Subnet",
+        "Properties": {
+          "AvailabilityZone": { "Ref": "Mefpubsub1Az" },
+          "VpcId": { "Ref": "MeforvpcCidr" },
+          "CidrBlock": { "Ref": "Mefpubsub1Cidr" },
+          "Tags": [{ "Key": "Name", "Value":  "Mefpubsub1" }]
+        }
+      },
+      "Mefpubsub2": {
+        "Type": "AWS::EC2::Subnet",
+        "Properties": {
+          "AvailabilityZone": { "Ref": "Mefpubsub2Az" },
+          "VpcId": { "Ref": "MeforvpcCidr" },
+          "CidrBlock": { "Ref": "Mefpubsub2Cidr" },
+          "Tags": [{ "Key": "Name", "Value":  "Mefpubsub2" }]
+        }
+      },
+      "Mefprivsub1": {
+        "Type": "AWS::EC2::Subnet",
+        "Properties": {
+          "AvailabilityZone": { "Ref": "Mefprivsub1Az" },
+          "VpcId": { "Ref": "MeforvpcCidr" },
+          "CidrBlock": { "Ref": "Mefprivsub1Cidr" },
+          "Tags": [{ "Key": "Name", "Value":  "Mefprivsub1" }]
+        }
+      },
+
+    },
+    "Outputs": {
+
+    }
+}
